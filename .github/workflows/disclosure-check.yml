@@ -1,0 +1,48 @@
+name: Disclosure check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Run the pre-publication checks (placeholders, git history)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: disclosure-check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  disclosure-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Private word list from the repository secret
+        env:
+          PRIVATE_WORDS: ${{ secrets.DISCLOSURE_PRIVATE_WORDS }}
+        run: |
+          mkdir -p "$HOME/.config/fundry-cfo"
+          if [ -n "$PRIVATE_WORDS" ]; then
+            printf '%s\n' "$PRIVATE_WORDS" > "$HOME/.config/fundry-cfo/private-words.txt"
+          elif [ "${{ github.event_name }}" != "pull_request" ]; then
+            # Secrets are absent only on pull requests from forks; anywhere
+            # else a missing list would make a green check meaningless.
+            echo "The private word list secret is not set; refusing to pass." >&2
+            exit 1
+          fi
+      - name: Gate can fail (seeded fixtures)
+        run: bash tests/disclosure-check.test.sh
+      - name: fill-client-ids test
+        run: bash tests/fill-client-ids.test.sh
+      - name: Gate passes on this tree
+        run: bash scripts/disclosure-check.sh
+      - name: Pre-publication checks
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release }}
+        run: bash scripts/disclosure-check.sh --release

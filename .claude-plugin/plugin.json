@@ -1,0 +1,13 @@
+{
+  "name": "fundry-cfo",
+  "version": "0.1.0",
+  "description": "Read-only Fundry connection for fund CFOs: build the quarterly LP pack, draft LP replies with figures, and brief management-company budget variance from your Fundry books. Drafts only; a person reviews and sends.",
+  "author": {
+    "name": "Fundry AI",
+    "url": "https://www.fundryai.com"
+  },
+  "homepage": "https://www.fundryai.com/security/mcp",
+  "repository": "https://github.com/ckpark123/fundry-cfo",
+  "license": "MIT",
+  "keywords": ["fund-finance", "cfo", "lp-reporting", "capital-accounts", "mcp"]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "fundry",
+  "owner": {
+    "name": "Fundry AI",
+    "url": "https://www.fundryai.com"
+  },
+  "metadata": {
+    "description": "Fundry's plugins for fund finance teams."
+  },
+  "plugins": [
+    {
+      "name": "fundry-cfo",
+      "source": "./",
+      "description": "Read-only Fundry connection with three CFO skills: quarterly LP pack, LP reply with figures, management-company variance brief.",
+      "version": "0.1.0",
+      "license": "MIT"
+    }
+  ]
+}

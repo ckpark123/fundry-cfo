@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "fundry": {
+      "type": "http",
+      "url": "https://www.fundryai.com/api/mcp",
+      "oauth": {
+        "clientId": "57459d6e-b837-4d4d-be9f-91a24dc1f0a1",
+        "callbackPort": 8976
+      }
+    }
+  }
+}
