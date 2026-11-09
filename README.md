@@ -61,19 +61,23 @@ file's steps.
 
 ### Codex
 
-```sh
-codex mcp add fundry --url https://www.fundryai.com/api/mcp --oauth-client-id c83c3735-7943-4ad7-a231-a3514526f4d8
-```
-
-Add this line at the top level of `~/.codex/config.toml`, because Fundry
-accepts only the registered sign-in return address, which uses this port:
+First add this line at the top level of `~/.codex/config.toml` (create the
+file if it does not exist). Fundry accepts only the registered sign-in return
+address, which uses this port, and Codex starts sign-in as soon as you add the
+server:
 
 ```toml
 mcp_oauth_callback_port = 8977
 ```
 
-Then run `codex mcp login fundry` and approve the connection on Fundry's
-page. For the skills, run Codex from a clone of this repository: it reads
+Then add the server and approve the connection on Fundry's page when your
+browser opens:
+
+```sh
+codex mcp add fundry --url https://www.fundryai.com/api/mcp --oauth-client-id c83c3735-7943-4ad7-a231-a3514526f4d8
+```
+
+If the browser did not open, run `codex mcp login fundry`. For the skills, run Codex from a clone of this repository: it reads
 [AGENTS.md](AGENTS.md), which points it at the skill files.
 
 ## What the assistant can read

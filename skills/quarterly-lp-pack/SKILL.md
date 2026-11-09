@@ -34,7 +34,9 @@ upload, email or share it.
 4. **Read everything, or say you did not.** A result with `has_more: true` is
    incomplete. Call the same tool again with the same arguments plus
    `cursor` = the `next_cursor` you were given, until `has_more` is `false`.
-   Then check that the `returned` values of all pages add up to `total`. If
+   A page can hold fewer rows than `page_size`: Fundry keeps each result
+   small enough for your assistant to read whole. Do not ask for a larger
+   page. Then check that the `returned` values of all pages add up to `total`. If
    they do not, or any page fails, stop and tell the user the read was
    incomplete. Never present a partial list as complete and never fill gaps.
 5. **A refusal is an answer.** If a tool result is an error, quote its message
@@ -77,7 +79,7 @@ upload, email or share it.
    means the calendar quarter end (03-31, 06-30, 09-30, 12-31); if the user
    indicates a non-calendar fiscal year, ask for the date.
 4. **Statements.** Call `list_capital_statements` with `firm_id`, `fund_id`,
-   `period_end` and `page_size: 200`, paging to the end (rule 4). On
+   and `period_end`, paging to the end (rule 4). On
    `no_statements_for_period`, apply rule 6. Take the `period_end` the result
    returns as **the pack period** and use that exact date (never `"latest"`)
    in every later call, so all sections describe the same period.
@@ -88,10 +90,11 @@ upload, email or share it.
    the multiples (with their as-of dates) and note that the statement totals
    belong to a different period.
 6. **Checks.** Call `check_capital_rollforward` with `firm_id`, `fund_id`,
-   `period_end` = the pack period, `basis: "both"` and `page_size: 200`,
-   paging to the end (rule 4). The counts (`lps_checked_count`, `per_basis`,
-   `disagreement_count`, `stored_flags_unparseable_count`) already cover the
-   whole period; the per-LP `rows` are what you page.
+   `period_end` = the pack period and `basis: "both"`, paging to the end
+   (rule 4). The counts (`lps_checked_count`, `per_basis`,
+   `disagreement_count`, `stored_check_recorded_count`,
+   `stored_flags_unparseable_count`) already cover the whole period; the
+   per-LP `rows` are what you page.
 7. **Cross-check before writing.** Compare `lps_checked_count` with the
    statements `total` from step 4. If they differ, say so at the top of the
    Checks section.
@@ -124,8 +127,16 @@ you add one, is COMPUTED with the count of LPs summed.
 **Checks** (COMPUTED).
 - Per basis (inception-to-date, year-to-date): the four counts from
   `per_basis` (balanced, balanced under an alternative hypothesis, violated,
-  uncheckable), `lps_checked_count`, `disagreement_count` and
-  `stored_flags_unparseable_count`.
+  uncheckable), `lps_checked_count`, `disagreement_count`,
+  `stored_check_recorded_count` and `stored_flags_unparseable_count`.
+- `stored_flag` is the roll-forward result Fundry recorded when it extracted
+  the statement: `true` a violation, `false` balanced only under an
+  alternative reading, `null` nothing recorded. Fundry records a result only
+  when its check finds something, so `null` does not mean the statement was
+  checked and passed. A disagreement is counted only where something was
+  recorded. If `stored_check_recorded_count` is 0, say that no extraction-time
+  check was recorded for the period, so there was nothing to compare, rather
+  than reporting 0 disagreements as agreement.
 - A table of every LP where either basis is not `balanced`, or
   `disagreement` is true: LP, basis, `recomputed_status`, residual (dollars,
   from `residual_cents`), `hypothesis` or `uncheckable_reason`,

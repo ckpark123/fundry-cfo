@@ -78,8 +78,8 @@ available.
    later call.
 3. **Fund.** `list_funds` with `firm_id`; one match on `rows[].name` (rule 7).
    If `available: false`, say the fund is not available to this connection and stop.
-4. **LP.** `list_lp_commitments` with `firm_id`, `fund_id`, `page_size: 200`,
-   paging to the end (rule 4). Find the LP by `lp_name` (case-insensitive).
+4. **LP.** `list_lp_commitments` with `firm_id` and `fund_id`, paging to the
+   end (rule 4; a page can hold fewer rows than `page_size`). Find the LP by `lp_name` (case-insensitive).
    If there is no exact match, show the closest names and ask; never pick
    one. Note `commitment_cents`, `called_cents`, `distributed_cents` and
    `called_possibly_unrecorded` from the commitment ledger.
@@ -101,7 +101,9 @@ available.
 **1. Note to you (not part of the reply).**
 - Each figure the draft uses, with the tool and field it came from.
 - This LP's roll-forward result on each basis: `recomputed_status`, residual,
-  `stored_flag`, `disagreement`, and the statement's `source_doc_id`. If the
+  `stored_flag`, `disagreement`, and the statement's `source_doc_id`.
+  `stored_flag: null` means Fundry recorded nothing at extraction, not that
+  the statement was checked and passed. If the
   basis behind a quoted figure is `violated` or `uncheckable`, or
   `disagreement` is true, recommend confirming that figure against the source
   statement before sending.
