@@ -1,13 +1,15 @@
 ---
 name: manco-variance-brief
-description: Brief how the management company ran against budget for one period, from the approved P&L in the firm's Fundry books. Use when the user asks "how did <entity> run against budget in <period>", "manco budget vs actual", or for a budget variance brief. Read-only; produces a draft for a person to review.
+description: Brief how the management company ran against budget for one period, from the P&L in the firm's Fundry books (the approved P&L, or the period's single draft P&L, labelled as a draft). Use when the user asks "how did <entity> run against budget in <period>", "manco budget vs actual", or for a budget variance brief. Read-only; produces a draft for a person to review.
 ---
 
 # Management-company variance brief
 
 You write a one-page brief of the management company's budget versus actual
-expenses for one period and one entity, from the approved P&L statement in
-Fundry. Every figure comes from a Fundry tool call made in this conversation.
+expenses for one period and one entity, from the P&L statement in Fundry:
+the approved one, or, when the period has none, its single draft, which you
+label as a draft throughout. Every figure comes from a Fundry tool call made
+in this conversation.
 The brief is a draft for a person at the firm to review; you never send or
 share it.
 
@@ -43,6 +45,10 @@ share it.
    net of every category, including those under budget.
 7. **Never guess.** Never pick an entity, a period or a statement for the
    user.
+8. **Draft actuals stay draft.** When the result has `actuals_final: false`,
+   the actuals come from a P&L that is not approved in Fundry and can change.
+   Never call those figures final, approved or closed, and never drop the
+   draft label from any table, sentence or heading that uses them.
 
 ## Tools (Fundry connector)
 
@@ -63,20 +69,29 @@ share it.
    - `entity_required`: show the `entities` and ask which. Never pick one.
      Call again with the chosen `manco_entity`.
    - `no_pl_statement_for_period`: show the `available_periods` and ask.
-   - `statement_not_final`: say the P&L for this period is not approved in
-     Fundry yet, so there are no final figures to brief. Stop.
-   - `ambiguous_statement`: say more than one approved P&L matches this
-     period and entity, and that it needs resolving in Fundry. Give no
-     figures. Stop.
+   - `statement_not_final`: quote the tool's message: the P&L for this
+     period could not be read as a statement, so there are no figures to
+     brief. Stop.
+   - `ambiguous_statement`: quote the tool's message: more than one approved
+     P&L, or (with none approved) more than one draft, matches this period
+     and entity, and it needs resolving in Fundry. Give no figures. Stop.
    - `ok` with `has_budget: false`: say no budget was found for this period
      and entity, quote `reason`, and say the budget can be uploaded in
-     Fundry. Give no variance figures. Stop.
-   - `ok` with `has_budget: true`: write the brief.
+     Fundry. If `actuals_final` is `false`, also say the P&L is a draft
+     (status `actuals_status`). Give no variance figures. Stop.
+   - `ok` with `has_budget: true`: write the brief. Check `actuals_final`
+     first: `false` means a draft brief (rule 8).
 
 ## The brief
 
 - **Heading:** the entity (`manco_entity`; when it is `null`, "firm-wide
-  management company") and the period `period_start` to `period_end`.
+  management company") and the period `period_start` to `period_end`. When
+  `actuals_final` is `false`, the heading starts "DRAFT, not approved in
+  Fundry:", and the next line quotes `provenance.actuals` verbatim and gives
+  the P&L status (`actuals_status`).
+- **Draft tables:** when `actuals_final` is `false`, every table's title or
+  first line says "Draft actuals (not approved in Fundry)", and the actual
+  column is headed "Actual (draft)".
 - **Totals** (from `totals`): budget (BOOKS), actual (BOOKS), variance
   (COMPUTED), variance % (COMPUTED). Variance is actual minus budget, so a
   positive variance means spending above budget.
@@ -87,10 +102,12 @@ share it.
 - If a `variance_pct` equals the `pct_clamp` value in `provenance` (positive
   or negative), write it as "at least" that percentage: the value is capped.
 - **Rules and sources:** quote verbatim the `provenance` entries whose keys
-  end in `_rule`; name the `budget_source` and the `pl_statement_id`; give
-  the `as_of` timestamp.
+  end in `_rule`, and `provenance.actuals`; name the `budget_source`, the
+  `pl_statement_id` and the `actuals_status`; give the `as_of` timestamp.
 - Close with: "Draft prepared by an AI assistant from Fundry's books, for
-  review."
+  review." When `actuals_final` is `false`, add: "The actuals are a draft P&L
+  that has not been approved in Fundry; re-run this brief once it is
+  approved."
 
 Markdown in the chat by default; a document only when the host can write
 files and the user asks for one, and say which you produced.

@@ -7,7 +7,7 @@ and use three skills built for a fund CFO:
 | --- | --- | --- |
 | `quarterly-lp-pack` | "Build the Q2 LP pack for <fund>" | A draft pack: fund summary, one capital-account row per LP, and a Checks section that recomputes every LP's capital roll-forward, with sources for every call |
 | `lp-reply-with-figures` | Paste an LP's email: "reply with their figures" | A draft reply quoting only that LP's figures, each marked "(Fundry books, <period end>)", plus a note on anything to confirm first |
-| `manco-variance-brief` | "How did the management company run against budget in <period>?" | A one-page brief of budget vs actual from the approved P&L, significant categories first |
+| `manco-variance-brief` | "How did the management company run against budget in <period>?" | A one-page brief of budget vs actual from the approved P&L, significant categories first. If the period has no approved P&L but one draft, the brief uses it and is labelled a draft throughout |
 
 Every figure comes from a Fundry tool call, in exact cents, labelled
 **BOOKS** (read from your books) or **COMPUTED** (recomputed or derived). When
@@ -18,12 +18,20 @@ Nothing is ever sent for you.
 ## Before you connect
 
 An owner or admin of your firm turns on **AI assistant access** in Fundry
-(Settings → AI assistant access) and confirms that the firm uses a business
-AI plan whose terms, as the firm has reviewed them, exclude training on your
-data (for example Claude Team or Enterprise, the Claude API, or an OpenAI
-business plan; personal plans do not qualify). Fundry records this
-confirmation; it does not check your AI provider's terms. Until access is on,
-every request is refused.
+(Settings → AI assistant access) and confirms one of two things:
+
+- the firm uses a business AI plan whose terms, as the firm has reviewed
+  them, exclude training on your data (Claude Team or Enterprise, the Claude
+  API, or an OpenAI business plan); or
+- the people who connect use personal Claude plans (Pro or Max), and each of
+  them has turned off **Help improve Claude** (claude.ai → Settings →
+  Privacy), so their chats are not used to train Claude.
+
+Personal plans from other AI providers, including personal ChatGPT plans used
+with Codex, are not covered. Fundry records this confirmation; it does not
+check your AI provider's terms or settings. Until access is on, every request
+is refused. A firm that confirmed before personal Claude plans were covered
+keeps access and is asked to confirm the current terms in the same place.
 
 Each person then connects their own assistant and approves it on Fundry's
 consent page. The assistant acts as that person and sees only what they can
@@ -46,16 +54,18 @@ Or, inside Claude Code: `/plugin marketplace add ckpark123/fundry-cfo`, then
 sign-in settings. Run `/mcp`, choose **fundry**, sign in to Fundry and approve
 the connection.
 
-### Claude (claude.ai, Team or Enterprise)
+### Claude (claude.ai)
 
-An owner of your Claude organization adds the connector once:
+On Team or Enterprise, an owner of your Claude organization adds the
+connector once for everyone. On a personal plan (Pro or Max), you add it
+yourself, after turning off **Help improve Claude** under Settings → Privacy:
 
 1. Settings → Connectors → **Add custom connector**.
 2. Name: `Fundry`. URL: `https://www.fundryai.com/api/mcp`.
 3. Advanced settings → OAuth Client ID: `b4bb45ad-7e0c-4523-bb7d-4d5aaddfa4eb`.
 
-Each member then clicks **Connect** on the Fundry connector and approves it
-on Fundry's page. To use the skills in Claude, upload the folders under
+Then click **Connect** on the Fundry connector and approve it on Fundry's
+page. To use the skills in Claude, upload the folders under
 `skills/` as skills in your Claude settings, or ask Claude to follow a skill
 file's steps.
 
@@ -116,6 +126,10 @@ returns data before it reads anything, and also records refused calls. Details: 
 `scripts/disclosure-check.sh` runs on every push and fails on anything this
 public repository must not contain; `tests/disclosure-check.test.sh` proves
 it can fail. Run `scripts/disclosure-check.sh --release` before publishing.
+
+`connect-commands.json` holds the connect commands Fundry's Settings page
+shows; `tests/connect-commands.test.sh` fails if any of them is missing from
+this README. Change both together.
 
 ## License
 

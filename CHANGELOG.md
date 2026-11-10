@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.2
+
+- Personal Claude plans (Pro or Max) are covered when each person who
+  connects has turned off "Help improve Claude". The README's "Before you
+  connect" and Claude sections say so; personal plans from other providers,
+  including personal ChatGPT plans used with Codex, are still not covered.
+- `manco-variance-brief`: when a period has no approved P&L but exactly one
+  draft, Fundry now returns its figures with `actuals_final: false`. The
+  skill labels the heading, every table and the close as draft, quotes
+  `provenance.actuals`, and never calls the figures final.
+  `statement_not_final` now means the P&L could not be read, and
+  `ambiguous_statement` covers duplicate drafts as well as duplicate
+  approved statements.
+- `connect-commands.json` lists the connect commands Fundry's Settings page
+  shows, and a test keeps it identical to the README.
+
 ## 0.1.1
 
 - Skills no longer ask for 200 rows per page. Fundry now keeps each result

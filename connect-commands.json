@@ -1,0 +1,18 @@
+{
+  "server_url": "https://www.fundryai.com/api/mcp",
+  "claude_ai": {
+    "connector_name": "Fundry",
+    "oauth_client_id": "b4bb45ad-7e0c-4523-bb7d-4d5aaddfa4eb"
+  },
+  "claude_code": {
+    "commands": [
+      "claude plugin marketplace add ckpark123/fundry-cfo",
+      "claude plugin install fundry-cfo@fundry"
+    ]
+  },
+  "codex": {
+    "config_line": "mcp_oauth_callback_port = 8977",
+    "add": "codex mcp add fundry --url https://www.fundryai.com/api/mcp --oauth-client-id c83c3735-7943-4ad7-a231-a3514526f4d8",
+    "login_fallback": "codex mcp login fundry"
+  }
+}
