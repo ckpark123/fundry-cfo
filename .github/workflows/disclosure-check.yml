@@ -41,6 +41,8 @@ jobs:
         run: bash tests/disclosure-check.test.sh
       - name: fill-client-ids test
         run: bash tests/fill-client-ids.test.sh
+      - name: connect commands match the README
+        run: bash tests/connect-commands.test.sh
       - name: Gate passes on this tree
         run: bash scripts/disclosure-check.sh
       - name: Pre-publication checks

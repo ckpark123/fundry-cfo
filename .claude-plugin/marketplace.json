@@ -12,7 +12,7 @@
       "name": "fundry-cfo",
       "source": "./",
       "description": "Read-only Fundry connection with three CFO skills: quarterly LP pack, LP reply with figures, management-company variance brief.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "license": "MIT"
     }
   ]
